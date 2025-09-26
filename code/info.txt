@@ -1,0 +1,85 @@
+
+Haydens = [
+
+Client side:
+Direct connection from serveri updating of data through smth tunnel
+
+user sends a post/get request updating the sql database, this then updates the internal, pushing it to everyone including the sender
+
+Server backend >> pushing new messages >> clients JS updates >> text >> holder of css
+
+client sends POST >> serves cleanes response >> validates it >> check it (lots of security >> reciver gets >1> sends to all clients
+                                                                                                           >2> updates sql incase of discconect
+
+On connect >> validate >> check if dissconnect >> then go to sevre backend to get sql update (this needs for thought)
+
+
+Wheres the dopamine you say?
+Leader boards and point system of trust (like karma on reddit) YESSS
+more points or "Trustoes" you get the more "Higher classed" people you can talk to
+talk to the devs,
+"Ears offline"
+- The higher your level of trust, the more tokens someone pays to talk wth u
+- tokens are £1 for 100
+- Level 1 trust = 5 tokens
+- Level 2 trust = 10
+- Level 3 trust = 20
+- Level 4 trust = 40
+- level 5 trust (max) = 75
+
+now what do they get out of talking to someone?
+What about, the longer you are on a chat, the more tokens you generate
+- "earns offline"
+- Cash out 1K tokens for £5 amazon gift (fake)      | maybe real or smth else. Its how we convey trust
+| afk page that is covered in ads
+
+
+
+feed it into ai data centers? selling.
+
+needs a insentive. <<<
+
+premuim tokens?  Where there are normal peasant tokens that are free and can be exchanged for talking tokens
+
+Ad points.
+Watch ads get points?  -Could be faked
+
+
+]
+===================================================================== (love how diffent we do things tbf LOL)
+Frankies:
+- Nice welcome screen with nice animations and "floating" text.
+- A connect button
+- Randomly connects you with someone using the platform,
+- You have 1 muinet to chat!
+- A censor word list: e.g. "Snap", "Snapchat", "Pic", "Nude", "D1zzy" etc.
+- A report button, that blocks future connections wth that person and reports a transcript to us to moderate
+- An account is required wth email signup
+- Apon signup, 3 free tokens are given (1 chat = 1 token)               | gambling?
+- Buy 10 tokens for 50p (each token is 5p)
+-
+
+
+
+
+Both: (semi final ideas)
+
+- When on a chat, depending on the chat level, u generate coins. You level up every 20s then 1m then 5m etc
+- You can use the coins to cash out REAL rewards. ( Make really hard: e.g. 1M coins - £2)
+
+--Ads
+-Loading between people
+-Reward ads for coins
+-Banner ads at bottom and top.
+-Toggleable ads (reduecs coin generation)
+-No more adds (£2.99)
+-Ad packs, redeem coins but then watch more ads then usally,   EG: 1 ad normall 20 coints, earn 200 now but watch 15 ads later)
+-"watch an ad for 10 coins" then 20, then 40 etc
+
+
+
+
+
+--Token types
+
+
