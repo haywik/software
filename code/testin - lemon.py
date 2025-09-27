@@ -5,10 +5,32 @@ from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.clock import Clock
 from kivy.uix.textinput import TextInput
+from kivy.core.audio import SoundLoader
 import time
 
 from contextlib import asynccontextmanager
 import asyncio
+
+'''
+
+#SOUNDS:
+self.background_music = SoundLoader.load('bg_menu.mp3)
+
+
+
+
+
+'''
+
+
+
+
+
+
+
+
+
+
 
 class MyLayout(BoxLayout):
     def __init__(self, **kwargs):
@@ -17,6 +39,10 @@ class MyLayout(BoxLayout):
         self.orientation = 'vertical'  # top-to-bottom layout
         self.padding = 20
         self.spacing = 10
+
+        if self.background_music:
+            self.background_music.loop = True
+            self.background_music.play()
 
         # Title
         self.add_widget(Label(text="Please enter your name to begin talking!"))
@@ -39,10 +65,19 @@ class MyLayout(BoxLayout):
 
 
 
-    async def enter_chatroom(self, instance):
+    def enter_chatroom(self, instance):
+        age = False
+        name = False
         name = self.name_input.text.strip()
         age = self.age_input.text.strip()
-        age = int(age)
+
+        if not age.isnumeric():
+            age = False
+        else:
+            age = int(age)
+
+
+
 
         if name and age and age >= 16:   #let me try
             # Loading Popup
@@ -51,23 +86,40 @@ class MyLayout(BoxLayout):
                           size_hint=(None, None), size=(700, 200))
             popup.open()
 
+
         elif name and age and age < 16:
-            print("triggered")
-            #Age access = DENIED
-            popup = Popup(title=f'Error',
-                        content=Label(text=f'You do not meet the minimum age requirements.'),
-                        size_hint=(None, None), size=(700, 200))
+
+
+            # Create a layout to hold multiple widgets
+            layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
+
+            # Add label and button
+            message = Label(text="You do not meet the minimum age requirements.")
+            btn = Button(text="Go Back")
+            layout.add_widget(message)
+            layout.add_widget(btn)
+
+            # Create popup
+            popup = Popup(
+                title='Error',
+                content=layout,
+                size_hint=(None, None),
+                size=(700, 200)
+            )
+
+            # Close
+            btn.bind(on_press=popup.dismiss)
+
+            # Show
             popup.open()
-            asyncio.sleep(5)
-            #then have it loop back to main screen
-            #No, if its not correct age, we need to kick them out compleately.      or be nice just restart the app
-            # But then kids will realise and they will jsut make there age 18+
+
+
 
 
         else:
             # No entry if no name or age
             popup = Popup(title='Error',
-                          content=Label(text='Please enter your name and age first.'),
+                          content=Label(text='Age and Name required.'),
                           size_hint=(None, None), size=(700, 200))
             popup.open()
 
