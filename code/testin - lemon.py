@@ -205,7 +205,7 @@ class MenuScreen(Screen):
         button_height = 0.12
         font_size = responsive_font(0.035)
 
-        enter_chat_btn = Button(text="Enter A Chat", size_hint=(1, button_height), font_size=font_size)
+        enter_chat_btn = Button(text="Connect", size_hint=(1, button_height), font_size=font_size)
         enter_chat_btn.bind(on_press=self.go_to_connecting)
         self.layout.add_widget(enter_chat_btn)
 
@@ -213,12 +213,12 @@ class MenuScreen(Screen):
         settings_btn.bind(on_press=self.open_settings)
         self.layout.add_widget(settings_btn)
 
-        help_btn = Button(text="Help", size_hint=(1, button_height), font_size=font_size)
+        help_btn = Button(text="Help/Report", size_hint=(1, button_height), font_size=font_size)
         help_btn.bind(on_press=self.open_help)
         self.layout.add_widget(help_btn)
 
         quit_btn = Button(
-            text="Quit", size_hint=(1, button_height), font_size=font_size,
+            text="Exit", size_hint=(1, button_height), font_size=font_size,
             on_press=self.exit_app
         )
         self.layout.add_widget(quit_btn)
@@ -249,7 +249,7 @@ class MenuScreen(Screen):
 
     def open_settings(self, instance):
         content = BoxLayout(orientation='vertical', padding=10, spacing=10)
-        content.add_widget(Label(text="Settings are not implemented yet. While you wait, visit CATA STUDIOS on roblox!", font_size=responsive_font(0.03)))
+        content.add_widget(Label(text="Settings are not implemented yet.", font_size=responsive_font(0.03)))
         close_btn = Button(text="Close", size_hint=(1, None), height=40)
         content.add_widget(close_btn)
         popup = Popup(title="Settings", content=content, size_hint=(None, None), size=(400, 300))
@@ -294,7 +294,7 @@ class ChatScreen(Screen):
 
         # Received message bubble
         received_msg = Label(
-            text="Hey! have you played catastrophic studio's new game?",
+            text="Hey! How old are you?",
             size_hint=(None, None),
             width=Window.width * 0.7,
             text_size=(Window.width * 0.7 - dp(20), None),
@@ -317,7 +317,7 @@ class ChatScreen(Screen):
 
         # Sent message bubble
         sent_msg = Label(
-            text="OMG YES! I LOVE secrets of the saharah!",
+            text="Welcome to the ebay customer serverce hel",
             size_hint=(None, None),
             width=Window.width * 0.7,
             text_size=(Window.width * 0.7 - dp(20), None),
