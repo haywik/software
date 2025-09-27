@@ -3,128 +3,176 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
-from kivy.clock import Clock
 from kivy.uix.textinput import TextInput
+from kivy.uix.image import Image
 from kivy.core.audio import SoundLoader
-import time
-
-from contextlib import asynccontextmanager
-import asyncio
-
-'''
-
-#SOUNDS:
-self.background_music = SoundLoader.load('bg_menu.mp3)
-
-
-
-
-
-'''
-
-
-
-
-
-
-
-
-
 
 
 class MyLayout(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.orientation = 'vertical'  # top-to-bottom layout
-        self.padding = 20
-        self.spacing = 10
+        self.orientation = 'vertical'
+        self.padding = 40
+        self.spacing = 20
 
-        if self.background_music:
-            self.background_music.loop = True
-            self.background_music.play()
+        # Background music
+        self.bg_music = SoundLoader.load('audio/menuBg.wav')
+        if self.bg_music:
+            self.bg_music.loop = True
+            self.bg_music.volume = 1.0
+            self.bg_music.play()
+        else:
+            print("Failed to load the music.")
 
-        # Title
-        self.add_widget(Label(text="Please enter your name to begin talking!"))
+        # Add image at the top
+        logo = Image(
+            source='images/logo.png',
+            size_hint=(1, None),
+            height=200,
+            allow_stretch=True,
+            keep_ratio=True
+        )
+        self.add_widget(logo)
 
-        # Name
-        self.name_input = TextInput(hint_text="Enter name.", multiline=False)
+        # Title Label
+        title_label = Label(
+            text="Welcome to [APP NAME]",
+            font_size=28,
+            bold=True,
+            size_hint=(1, None),
+            height=50,
+            color=(0.15, 0.35, 0.6, 1)  # Dark blue text
+        )
+        self.add_widget(title_label)
+
+        # Name prompt
+        name_label = Label(
+            text="Enter your name:",
+            font_size=18,
+            size_hint=(1, None),
+            height=30,
+            color=(0.2, 0.4, 0.7, 1)
+        )
+        self.add_widget(name_label)
+
+        self.name_input = TextInput(
+            hint_text="e.g. Simon",
+            multiline=False,
+            size_hint_y=None,
+            height=40,
+            font_size=16,
+            background_color=(1, 1, 1, 1),
+            foreground_color=(0.1, 0.1, 0.1, 1),
+            cursor_color=(0.15, 0.35, 0.6, 1),
+            cursor_blink=True,
+            padding=[10, 10, 10, 10]
+        )
         self.add_widget(self.name_input)
 
-        #another title
-        self.add_widget(Label(text="Please enter your age. (This will not be shown to anyone.)"))
+        # Age prompt
+        age_label = Label(
+            text="Enter your age (not visible to others):",
+            font_size=18,
+            size_hint=(1, None),
+            height=30,
+            color=(0.2, 0.4, 0.7, 1)
+        )
+        self.add_widget(age_label)
 
-        # Age
-        self.age_input = TextInput(hint_text="Enter Age.", multiline=False)
+        self.age_input = TextInput(
+            hint_text="e.g. 27",
+            multiline=False,
+            size_hint_y=None,
+            height=40,
+            font_size=16,
+            background_color=(1, 1, 1, 1),
+            foreground_color=(0.1, 0.1, 0.1, 1),
+            cursor_color=(0.15, 0.35, 0.6, 1),
+            cursor_blink=True,
+            padding=[10, 10, 10, 10]
+        )
         self.add_widget(self.age_input)
 
-        # Enter
-        enter_button = Button(text="Click me to enter the chat room")
+        # Enter chat button
+        enter_button = Button(
+            text="Enter Chatroom",
+            size_hint=(1, None),
+            height=50,
+            background_normal='',
+            background_color=(0.15, 0.35, 0.6, 1),  # Deep blue
+            color=(1, 1, 1, 1),  # White text
+            font_size=25,
+            bold=True
+        )
         enter_button.bind(on_press=self.enter_chatroom)
         self.add_widget(enter_button)
 
+    def create_popup(self, title, message, is_error=False):
+        layout = BoxLayout(orientation='vertical', spacing=10, padding=15)
 
+        label_color = (0.7, 0.1, 0.1, 1) if is_error else (0.15, 0.35, 0.6, 1)
+        btn_color = (0.7, 0.1, 0.1, 1) if is_error else (0.15, 0.35, 0.6, 1)
+
+        label = Label(text=message, color=label_color, font_size=16)
+        btn = Button(
+            text="Go Back",
+            size_hint=(1, None),
+            height=40,
+            background_normal='',
+            background_color=btn_color,
+            color=(1, 1, 1, 1)
+        )
+
+        layout.add_widget(label)
+        layout.add_widget(btn)
+
+        popup = Popup(
+            title=title,
+            content=layout,
+            size_hint=(None, None),
+            size=(500, 200)
+        )
+
+        btn.bind(on_press=popup.dismiss)
+        popup.open()
 
     def enter_chatroom(self, instance):
-        age = False
-        name = False
         name = self.name_input.text.strip()
-        age = self.age_input.text.strip()
+        age_input = self.age_input.text.strip()
 
-        if not age.isnumeric():
+        if not age_input.isnumeric():
             age = False
         else:
-            age = int(age)
+            age = int(age_input)
 
-
-
-
-        if name and age and age >= 16:   #let me try
-            # Loading Popup
-            popup = Popup(title=f'Welcome, {name}!',
-                          content=Label(text=f'Hang on tight as we prepare a few things for you!'),
-                          size_hint=(None, None), size=(700, 200))
-            popup.open()
-
-
-        elif name and age and age < 16:
-
-
-            # Create a layout to hold multiple widgets
-            layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
-
-            # Add label and button
-            message = Label(text="You do not meet the minimum age requirements.")
-            btn = Button(text="Go Back")
-            layout.add_widget(message)
-            layout.add_widget(btn)
-
-            # Create popup
-            popup = Popup(
-                title='Error',
-                content=layout,
-                size_hint=(None, None),
-                size=(700, 200)
+        if name and age and age >= 16:
+            self.create_popup(
+                title=f'Welcome, {name}!',
+                message=f'Welcome to the chatroom, {name}!',
+                is_error=False
             )
 
-            # Close
-            btn.bind(on_press=popup.dismiss)
-
-            # Show
-            popup.open()
-
-
+        elif name and age and age < 16:
+            self.create_popup(
+                title='Error',
+                message="You do not meet the minimum age requirements.",
+                is_error=True
+            )
 
 
         else:
-            # No entry if no name or age
-            popup = Popup(title='Error',
-                          content=Label(text='Age and Name required.'),
-                          size_hint=(None, None), size=(700, 200))
-            popup.open()
+            self.create_popup(
+                title='Error',
+                message='Both name and age are required.',
+                is_error=True
+            )
 
 
 class MyApp(App):
+    title = "[APP NAME]"
+    icon =  "images/icon.png"
+
     def build(self):
         return MyLayout()
 
