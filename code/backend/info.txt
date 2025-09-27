@@ -1,0 +1,17 @@
+
+
+Network structure::
+
+
+Client >>> "Im 20.456.122.31,ID 38120" (use cookies) >>> server "Recived"
+
+Starts a peer to peer - push data to client
+
+Client request new chat >> server places into queue >> (Sorts in value , add later)
+
+When users paired >> send meta to both clients >> start chat function
+
+When chat msg recived >> relay it to pair by comparing from function  varibles pusghed into >> relay msg to client 1 and 2 >> log in database
+
+on dissconnect ( add later)
+
