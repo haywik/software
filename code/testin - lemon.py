@@ -11,10 +11,28 @@ from kivy.core.audio import SoundLoader
 from kivy.core.window import Window
 from kivy.metrics import dp
 from kivy.graphics import Color, RoundedRectangle, Rectangle
+from kivy.uix.behaviors import ButtonBehavior
+import webbrowser
 
 
 def responsive_font(percent=0.04):
     return int(Window.height * percent)
+
+
+# Link label for Terms of Service
+class LinkLabel(ButtonBehavior, Label):
+    def __init__(self, url, **kwargs):
+        super().__init__(**kwargs)
+        self.url = url
+        self.color = (0.15, 0.35, 0.6, 1)
+        self.underline = True
+        self.font_size = responsive_font(0.025)
+        self.halign = 'center'
+        self.valign = 'middle'
+        self.bind(size=lambda inst, val: setattr(inst, 'text_size', val))
+
+    def on_press(self):
+        webbrowser.open(self.url)
 
 
 # welcome/sign up page
@@ -78,6 +96,24 @@ class WelcomeLayout(BoxLayout):
             input_filter='int'
         )
         self.add_widget(self.age_input)
+
+        # Terms of Service container
+        tos_label = Label(
+            text="By clicking continue, you agree to the ",
+            font_size=responsive_font(0.025),
+            size_hint=(None, None),
+            height=dp(25)
+        )
+        tos_link = LinkLabel(
+            text="Terms and Conditions",
+            url="https://example.com/tos",
+            size_hint=(None, None),
+            height=dp(25)
+        )
+        tos_container = BoxLayout(orientation='horizontal', size_hint=(1, None), height=dp(25), spacing=5)
+        tos_container.add_widget(tos_label)
+        tos_container.add_widget(tos_link)
+        self.add_widget(tos_container)
 
         # Enter button
         enter_button = Button(
@@ -270,7 +306,6 @@ class MenuScreen(Screen):
 class ChatScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-
         main_layout = BoxLayout(orientation='vertical')
 
         # Top bar with back button and title
@@ -292,54 +327,6 @@ class ChatScreen(Screen):
         chat_body = BoxLayout(orientation='vertical', padding=dp(10), spacing=dp(10))
         self.chat_body = chat_body
 
-        # Received message bubble
-        received_msg = Label(
-            text="Hey! How old are you?",
-            size_hint=(None, None),
-            width=Window.width * 0.7,
-            text_size=(Window.width * 0.7 - dp(20), None),
-            halign='left',
-            valign='middle',
-            padding=(dp(10), dp(10)),
-            font_size=responsive_font(0.035),
-            color=(0, 0, 0, 1),
-            markup=True,
-        )
-        received_msg.bind(texture_size=lambda inst, val: setattr(inst, 'height', val[1]))
-        received_container = BoxLayout(size_hint_y=None, padding=(dp(10), dp(5), Window.width * 0.3, dp(5)))
-        received_container.add_widget(received_msg)
-        received_container.bind(minimum_height=received_container.setter('height'))
-        with received_msg.canvas.before:
-            Color(0.9, 0.9, 0.9, 1)
-            received_msg.bg = RoundedRectangle(pos=received_msg.pos, size=received_msg.size, radius=[15])
-        received_msg.bind(pos=lambda inst, val: setattr(inst.bg, 'pos', val))
-        received_msg.bind(size=lambda inst, val: setattr(inst.bg, 'size', val))
-
-        # Sent message bubble
-        sent_msg = Label(
-            text="Welcome to the ebay customer serverce hel",
-            size_hint=(None, None),
-            width=Window.width * 0.7,
-            text_size=(Window.width * 0.7 - dp(20), None),
-            halign='left',
-            valign='middle',
-            padding=(dp(10), dp(10)),
-            font_size=responsive_font(0.035),
-            color=(1, 1, 1, 1),
-            markup=True,
-        )
-        sent_msg.bind(texture_size=lambda inst, val: setattr(inst, 'height', val[1]))
-        sent_container = BoxLayout(size_hint_y=None, padding=(Window.width * 0.3, dp(5), dp(10), dp(5)))
-        sent_container.add_widget(sent_msg)
-        sent_container.bind(minimum_height=sent_container.setter('height'))
-        with sent_msg.canvas.before:
-            Color(0.07, 0.37, 0.33, 1)
-            sent_msg.bg = RoundedRectangle(pos=sent_msg.pos, size=sent_msg.size, radius=[15])
-        sent_msg.bind(pos=lambda inst, val: setattr(inst.bg, 'pos', val))
-        sent_msg.bind(size=lambda inst, val: setattr(inst.bg, 'size', val))
-
-        chat_body.add_widget(received_container)
-        chat_body.add_widget(sent_container)
         main_layout.add_widget(chat_body)
 
         # Text input and send button
@@ -362,7 +349,7 @@ class ChatScreen(Screen):
             background_color=(0.07, 0.37, 0.33, 1),
             color=(1, 1, 1, 1)
         )
-        send_btn.bind(on_press=lambda inst: None)  # still a dead button
+        send_btn.bind(on_press=lambda inst: None)
         input_container.add_widget(send_btn)
 
         main_layout.add_widget(input_container)
