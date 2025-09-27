@@ -44,5 +44,7 @@ class LoadingApp(App):
 
         return sm
 
+    title="[APP NAME]"
+
 if __name__ == '__main__':
     LoadingApp().run()

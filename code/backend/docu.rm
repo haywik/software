@@ -8,3 +8,9 @@ Network:
 
 /etc/systemd/network/lxcbr0.netdev
 
+/etc/systemd/network/lxcbr0.network
+ip 10.0.3.1/24
+
+sudo lxc-start -n app1 -F
+-F interactive
+-d background

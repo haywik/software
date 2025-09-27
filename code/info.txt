@@ -93,7 +93,9 @@ talk to the devs,
 
 
 
---Token types
+--Token
+
+-stars after reaction means more tokens can be earned and spent
 
 
 Code:
@@ -102,3 +104,17 @@ Code:
 # BeeWare - Like a native android aplication 👌
 # Chaquopy - Like kotlin and java   🚫
 # Tkinter - basic, but only UI
+
+
+--Interactions:
+
+-Games
+-Customisbale ui
+-subscription (no ads, premuin badge, affects rank/levls)
+-send habtics (levels)
+-flash bang
+-jumpscare
+-upsidedown/cool effects
+-sound soudns
+-sound boards
+-emjois
