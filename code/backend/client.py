@@ -1,28 +1,52 @@
 import asyncio
 import websockets
-
-
-
+import json
+'''
+msg = {
+    "client":{
+        "alive":True,
+        "request":"null",
+        "msg":"null"
+    }
+}
+'''
 
 async def connect():
     uri = "ws://localhost:8011/join"
 
     async with websockets.connect(uri) as websocket:
-        msg = await websocket.recv()
-        print(msg)
+        serv = await websocket.recv()
+        print(f"INFO websocket.connect(uri): {serv}")
 
-        while True:
-            try:
-                msg = await websocket.recv()
-                print("msg recived",msg)
-            except:
-                print("msg disconnected")
-                break
+        while True: # heyyyyyyyyyy
+            outcoming = {   #outcoming for clinet, incoming for client
+                "client": {
+                    "type": "websocket.send",
 
-async def chat(client_msg):
-    url = "ws://localhost:8011/chat"
-
-
+                    "alive": True,
+                    "request": "alive",
+                    "msg": "null"
+                }
+            }
 
 
-asyncio.run(connect())
+            await websocket.send(json.dumps(outcoming))
+
+
+            incoming = await json.loads(websocket.recv())
+
+            if incoming["server"]["request"] == "message":
+                print("INFO websocket.connect(uri) MESSAGE RECEIVED: {serv['client']['msg']}")
+            elif incoming["server"]["request"] == "response":
+                print("INFO websocket.connect(uri) SERVER RESPONSE: {serv['client']['msg']}")
+
+            await asyncio.sleep(1)
+
+        #new room logic?
+
+
+while True: #needs better error management, temporty fix
+    try:
+        asyncio.run(connect())
+    except Exception as e:
+        print("ERROR core run",e)

@@ -1,6 +1,7 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout  # <-- ADDED IMPORT
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
@@ -10,32 +11,24 @@ from kivy.clock import Clock
 from kivy.core.audio import SoundLoader
 from kivy.core.window import Window
 from kivy.metrics import dp
-from kivy.graphics import Color, RoundedRectangle, Rectangle
-from kivy.uix.behaviors import ButtonBehavior
+from kivy.graphics import Color, Rectangle
 import webbrowser
+
+# -------------------- CONFIG --------------------
+APP_NAME = "OpenBox [TEMP]"
+APP_ICON = "images/icon.png"
+font = "Fonts/BebasNeue-Regular.ttf"
+# ------------------------------------------------
+
+# Set window icon BEFORE App runs (or it gets glitchy glitchison)
+Window.icon = APP_ICON
 
 
 def responsive_font(percent=0.04):
     return int(Window.height * percent)
 
 
-# Link label for Terms of Service
-class LinkLabel(ButtonBehavior, Label):
-    def __init__(self, url, **kwargs):
-        super().__init__(**kwargs)
-        self.url = url
-        self.color = (0.15, 0.35, 0.6, 1)
-        self.underline = True
-        self.font_size = responsive_font(0.025)
-        self.halign = 'center'
-        self.valign = 'middle'
-        self.bind(size=lambda inst, val: setattr(inst, 'text_size', val))
-
-    def on_press(self):
-        webbrowser.open(self.url)
-
-
-# welcome/sign up page
+# ---------------- Welcome / Sign Up Page ----------------
 class WelcomeLayout(BoxLayout):
     def __init__(self, screen_manager, **kwargs):
         super().__init__(**kwargs)
@@ -55,31 +48,19 @@ class WelcomeLayout(BoxLayout):
 
         # Title
         self.add_widget(Label(
-            text="Welcome to [APP NAME]",
+            text=f"Welcome to {APP_NAME}",
             font_size=responsive_font(0.045),
+            font_name=font,
             bold=True,
             size_hint=(1, 0.1),
             color=(0.15, 0.35, 0.6, 1)
         ))
 
-        # Sponsorship text in top-right
-        sponsor_label = Label(
-            text="By signing up, you agree to our ToS and Conditions.",
-            font_size=responsive_font(0.02),
-            size_hint=(None, None),
-            size=(Window.width * 0.5, dp(30)),
-            halign='right',
-            valign='middle',
-            color=(0.3, 0.3, 0.3, 1),
-            pos_hint={"right": 1, "top": 1}
-        )
-        sponsor_label.bind(size=lambda inst, val: setattr(inst, 'text_size', val))
-        self.add_widget(sponsor_label)
-
         # Name Input
         self.add_widget(Label(text="Name:", size_hint=(1, 0.05), font_size=responsive_font(0.03)))
         self.name_input = TextInput(
             hint_text="Enter your name:",
+            font_name=font,
             multiline=False,
             size_hint=(1, 0.08),
             font_size=responsive_font(0.03)
@@ -89,6 +70,7 @@ class WelcomeLayout(BoxLayout):
         # Age Input
         self.add_widget(Label(text="Age:", size_hint=(1, 0.05), font_size=responsive_font(0.03)))
         self.age_input = TextInput(
+            font_name=font,
             hint_text="Enter your age:",
             multiline=False,
             size_hint=(1, 0.08),
@@ -97,34 +79,38 @@ class WelcomeLayout(BoxLayout):
         )
         self.add_widget(self.age_input)
 
-        # Terms of Service container
+        # TOS
         tos_label = Label(
-            text="By clicking continue, you agree to the ",
+            text="By clicking continue, you agree to the [ref=tos][color=1a5999][u]Terms and Conditions[/u][/color][/ref]",
+            markup=True,
             font_size=responsive_font(0.025),
-            size_hint=(None, None),
-            height=dp(25)
+            size_hint_y=None,
+            height=dp(40)
         )
-        tos_link = LinkLabel(
-            text="Terms and Conditions",
-            url="https://example.com/tos",
-            size_hint=(None, None),
-            height=dp(25)
-        )
-        tos_container = BoxLayout(orientation='horizontal', size_hint=(1, None), height=dp(25), spacing=5)
-        tos_container.add_widget(tos_label)
-        tos_container.add_widget(tos_link)
-        self.add_widget(tos_container)
+        # This tells the label to wrap its text based on its width, which allows halign to work
+        tos_label.bind(width=lambda *x: setattr(tos_label, 'text_size', (tos_label.width, None)))
+        tos_label.bind(on_ref_press=self.open_link)
+
 
         # Enter button
         enter_button = Button(
-            text="Create Account",
+            text="Continue",
+            font_name=font,
             size_hint=(1, 0.1),
             background_color=(0.15, 0.35, 0.6, 1),
             color=(1, 1, 1, 1),
             font_size=responsive_font(0.035)
         )
         enter_button.bind(on_press=self.enter_chatroom)
+
+        # Add ToS first, then button
+        self.add_widget(tos_label)
         self.add_widget(enter_button)
+
+    def open_link(self, instance, value):
+        """Called when the Terms and Conditions link is clicked!!!"""
+        if value == 'tos':
+            webbrowser.open("app.haywik.com/tos")
 
     def show_popup(self, title, message, is_error=False):
         color = (0.7, 0.1, 0.1, 1) if is_error else (0.15, 0.35, 0.6, 1)
@@ -154,19 +140,37 @@ class WelcomeLayout(BoxLayout):
         self.screen_manager.current = 'loading'
 
 
-# Sign up screen
+# ---------------- Screens ----------------
 class WelcomeScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.bg_music = None
         self.fade_event = None
         self.music_played = False
-        self.layout = None
 
+    # --- MODIFIED SECTION ---
     def on_enter(self):
         self.clear_widgets()
-        self.layout = WelcomeLayout(screen_manager=self.manager)
-        self.add_widget(self.layout)
+
+        # Use a FloatLayout to position the code input box on top
+        root_layout = FloatLayout()
+
+        # Add the original WelcomeLayout (the BoxLayout with all the sign-in widgets)
+        welcome_box_layout = WelcomeLayout(screen_manager=self.manager)
+        root_layout.add_widget(welcome_box_layout)
+
+        # Create and add the temporary code input box
+        code_input = TextInput(
+            hint_text="Code",
+            multiline=False,
+            size_hint=(0.15, 0.07), # Small size
+            pos_hint={'right': 0.98, 'top': 0.98}, # Position top-right
+            font_size=responsive_font(0.025)
+        )
+        code_input.bind(text=self.check_code) # Check code on every text change
+        root_layout.add_widget(code_input)
+
+        self.add_widget(root_layout)
 
         if not self.music_played:
             self.bg_music = SoundLoader.load('audio/menuBg.wav')
@@ -175,6 +179,15 @@ class WelcomeScreen(Screen):
                 self.bg_music.loop = True
                 self.bg_music.play()
                 self.music_played = True
+
+    def check_code(self, instance, value):
+        """Checks the input text and skips to menu if it matches."""
+        if value == "3609":
+            # Get the menu screen and set a default name
+            menu_screen = self.manager.get_screen('menu')
+            menu_screen.set_welcome_message("Developer")
+            self.manager.current = 'menu'
+    # --- END OF MODIFIED SECTION ---
 
     def on_pre_leave(self):
         if self.bg_music:
@@ -186,14 +199,15 @@ class WelcomeScreen(Screen):
         if self.bg_music.volume > 0.05:
             self.bg_music.volume -= 0.05
         else:
-            self.bg_music.stop()
+            if self.bg_music:
+                self.bg_music.stop()
             self.bg_music = None
-            self.fade_event.cancel()
+            if self.fade_event:
+                self.fade_event.cancel()
             self.fade_event = None
             self.music_played = False
 
 
-# Loading...
 class LoadingScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -213,7 +227,6 @@ class LoadingScreen(Screen):
         self.manager.current = 'menu'
 
 
-# Connecting
 class ConnectingScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -229,35 +242,49 @@ class ConnectingScreen(Screen):
         self.manager.current = 'chat'
 
 
-# Menu screen
 class MenuScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.bg_music = None
         self.layout = BoxLayout(orientation='vertical', padding=40, spacing=20)
+
+        # Background styling
+        with self.layout.canvas.before:
+            Color(0.95, 0.95, 0.95, 1)
+            self.bg_rect = Rectangle(pos=self.layout.pos, size=self.layout.size)
+        self.layout.bind(pos=lambda inst, val: setattr(self.bg_rect, 'pos', val))
+        self.layout.bind(size=lambda inst, val: setattr(self.bg_rect, 'size', val))
+
+        # Tokens label
+        self.tokens_label = Label(text="Tokens: 0", font_size=responsive_font(0.03),
+                                  color=(1.0, 0.843, 0.0, 1),
+                                  font_name="Fonts/BebasNeue-Regular.ttf",
+                                  size_hint=(1, 0.05), halign='left', valign='middle')
+        self.tokens_label.bind(size=lambda inst, val: setattr(inst, 'text_size', val))
+        self.layout.add_widget(self.tokens_label)
+
         self.label = Label(text="", font_size=responsive_font(0.04), size_hint=(1, 0.1))
         self.layout.add_widget(self.label)
 
         button_height = 0.12
         font_size = responsive_font(0.035)
 
-        enter_chat_btn = Button(text="Connect", size_hint=(1, button_height), font_size=font_size)
-        enter_chat_btn.bind(on_press=self.go_to_connecting)
-        self.layout.add_widget(enter_chat_btn)
+        def styled_button(text, callback):
+            btn = Button(
+                text=text,
+                size_hint=(1, button_height),
+                font_size=font_size,
+                background_normal='',
+                background_color=(0.15, 0.35, 0.6, 1),
+                color=(1, 1, 1, 1)
+            )
+            btn.bind(on_press=callback)
+            return btn
 
-        settings_btn = Button(text="Settings", size_hint=(1, button_height), font_size=font_size)
-        settings_btn.bind(on_press=self.open_settings)
-        self.layout.add_widget(settings_btn)
-
-        help_btn = Button(text="Help/Report", size_hint=(1, button_height), font_size=font_size)
-        help_btn.bind(on_press=self.open_help)
-        self.layout.add_widget(help_btn)
-
-        quit_btn = Button(
-            text="Exit", size_hint=(1, button_height), font_size=font_size,
-            on_press=self.exit_app
-        )
-        self.layout.add_widget(quit_btn)
+        self.layout.add_widget(styled_button("Connect", self.go_to_connecting))
+        self.layout.add_widget(styled_button("Rewards", self.open_rewards))
+        self.layout.add_widget(styled_button("Help/Report", self.open_help))
+        self.layout.add_widget(styled_button("Exit", self.exit_app))
 
         self.add_widget(self.layout)
 
@@ -275,7 +302,8 @@ class MenuScreen(Screen):
             self.bg_music = None
 
     def set_welcome_message(self, name):
-        self.label.text = f"Welcome, {name}!"
+        self.label.text = f"Welcome, {name}, to {APP_NAME}!"
+        self.label.color = (0.5, 0.5, 0.5, 1)
 
     def exit_app(self, instance):
         App.get_running_app().stop()
@@ -283,18 +311,25 @@ class MenuScreen(Screen):
     def go_to_connecting(self, instance):
         self.manager.current = 'connecting'
 
-    def open_settings(self, instance):
+    def open_rewards(self, instance):
         content = BoxLayout(orientation='vertical', padding=10, spacing=10)
-        content.add_widget(Label(text="Settings are not implemented yet.", font_size=responsive_font(0.03)))
+        content.add_widget(Label(text="Buy rewards with your tokens:", font_size=responsive_font(0.03)))
+        for reward in ["£5 amazon gift card - 1000 tokens",
+                       "Customizabble chat sticker - 100 tokens",
+                       "Basic Soundboard - 350 tokens",
+                       "Advanced Soundboard - 750 tokens",
+                       "£10 Uber gift card - 1750 tokens"]:
+            btn = Button(text=reward, size_hint=(1, None), height=40)
+            content.add_widget(btn)
         close_btn = Button(text="Close", size_hint=(1, None), height=40)
         content.add_widget(close_btn)
-        popup = Popup(title="Settings", content=content, size_hint=(None, None), size=(400, 300))
+        popup = Popup(title="Rewards", content=content, size_hint=(None, None), size=(400, 400))
         close_btn.bind(on_press=popup.dismiss)
         popup.open()
 
     def open_help(self, instance):
         content = BoxLayout(orientation='vertical', padding=10, spacing=10)
-        content.add_widget(Label(text="Help is not implemented yet.", font_size=responsive_font(0.03)))
+        content.add_widget(Label(text="Help is being worked on!", font_size=responsive_font(0.03)))
         close_btn = Button(text="Close", size_hint=(1, None), height=40)
         content.add_widget(close_btn)
         popup = Popup(title="Help", content=content, size_hint=(None, None), size=(400, 300))
@@ -302,7 +337,6 @@ class MenuScreen(Screen):
         popup.open()
 
 
-# Chat screen
 class ChatScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -316,11 +350,11 @@ class ChatScreen(Screen):
         top_bar.bind(pos=lambda inst, val: setattr(top_bar.bg_rect, 'pos', val))
         top_bar.bind(size=lambda inst, val: setattr(top_bar.bg_rect, 'size', val))
 
-        back_btn = Button(text="←", size_hint=(None, 1), width=dp(50), font_size=responsive_font(0.05),
+        back_btn = Button(text="Go Back", size_hint=(None, 1), width=dp(50), font_size=responsive_font(0.05),
                           background_color=(0, 0, 0, 0), color=(1, 1, 1, 1))
         back_btn.bind(on_press=self.go_back)
         top_bar.add_widget(back_btn)
-        top_bar.add_widget(Label(text="[APP NAME]", font_size=responsive_font(0.045), bold=True, color=(1, 1, 1, 1)))
+        top_bar.add_widget(Label(text=APP_NAME, font_size=responsive_font(0.045), bold=True, color=(1, 1, 1, 1)))
         main_layout.add_widget(top_bar)
 
         # Chat messages container
@@ -359,8 +393,13 @@ class ChatScreen(Screen):
         self.manager.current = 'menu'
 
 
+# ---------------- Application ----------------
 class MyApp(App):
     def build(self):
+
+        self.title = APP_NAME
+        self.icon = APP_ICON
+
         sm = ScreenManager()
         sm.add_widget(WelcomeScreen(name='welcome'))
         sm.add_widget(LoadingScreen(name='loading'))
