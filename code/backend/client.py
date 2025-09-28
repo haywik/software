@@ -18,7 +18,7 @@ async def connect():
         serv = await websocket.recv()
         print(f"INFO websocket.connect(uri): {serv}")
 
-        while True: # heyyyyyyyyyy
+        while True: #
             outcoming = {   #outcoming for clinet, incoming for client
                 "client": {
                     "type": "websocket.send",
@@ -33,12 +33,14 @@ async def connect():
             await websocket.send(json.dumps(outcoming))
 
 
-            incoming = await json.loads(websocket.recv())
+            incoming =  json.loads(await websocket.recv())
 
             if incoming["server"]["request"] == "message":
+                temp = incoming['server']['msg']
                 print("INFO websocket.connect(uri) MESSAGE RECEIVED: {serv['client']['msg']}")
             elif incoming["server"]["request"] == "response":
-                print("INFO websocket.connect(uri) SERVER RESPONSE: {serv['client']['msg']}")
+                temp=incoming['server']['msg']
+                print("INFO websocket.connect(uri) SERVER RESPONSE: {}")
 
             await asyncio.sleep(1)
 

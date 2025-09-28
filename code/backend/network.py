@@ -130,7 +130,7 @@ async def msg_manager(websocket : WebSocket,Cid,incoming):
     outcoming["server"]["request"] = "message"
     outcoming["server"]["msg"] = incoming["request"]["msg"]
 
-    await websocket.send_json(outcoming)
+    await websocket.send(json.dumps(outcoming))
 
     return
 

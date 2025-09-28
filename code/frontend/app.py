@@ -84,6 +84,7 @@ class WelcomeLayout(BoxLayout):
             text="By clicking continue, you agree to the [ref=tos][color=1a5999][u]Terms and Conditions[/u][/color][/ref]",
             markup=True,
             font_size=responsive_font(0.025),
+            font_name=font,
             size_hint_y=None,
             height=dp(40)
         )
@@ -155,11 +156,11 @@ class WelcomeScreen(Screen):
         # Use a FloatLayout to position the code input box on top
         root_layout = FloatLayout()
 
-        # Add the original WelcomeLayout (the BoxLayout with all the sign-in widgets)
+        # Add the original WelcomeLayout
         welcome_box_layout = WelcomeLayout(screen_manager=self.manager)
         root_layout.add_widget(welcome_box_layout)
 
-        # Create and add the temporary code input box
+        # The developer only code box
         code_input = TextInput(
             hint_text="Code",
             multiline=False,
