@@ -114,6 +114,10 @@ async def join(websocket: WebSocket):
             incoming = await websocket.receive_text()
             asyncio.create_task(msg_manager(websocket,Cid,incoming))
         except WebSocketDisconnect:
+            try:
+                await websocket.close()
+            except:
+                pass
             print("websocket disconnect")
             if Cid in online:
                 if online[Cid]["partner"] == "null":
@@ -124,6 +128,11 @@ async def join(websocket: WebSocket):
 
                     online.update({online[online[Cid]["partner"]]["partner"]:"null"})
         except RuntimeError:
+            try:
+                await websocket.close()
+                await asyncio.sleep(5)
+            except:
+                pass
             print("run time error in join")
             print("websocket disconnect")
             if Cid in online:
@@ -135,6 +144,10 @@ async def join(websocket: WebSocket):
 
                     online.update({online[online[Cid]["partner"]]["partner"]: "null"})
         except Exception:
+            try:
+                await websocket.close()
+            except:
+                pass
             print("some not good in join, finnally called")
 
 
@@ -175,13 +188,26 @@ async def msg_manager(websocket : WebSocket,Cid,incoming):
 
         await websocket1.send(json.dumps(outcoming))
     except RuntimeError:
+        try:
+            await websocket.close()
+
+        except:
+            pass
         print("discconet msg already recived")
     except WebSocketDisconnect:
+        try:
+            await websocket.close()
+        except:
+            pass
         print("Websocket disconnect")
 
 
 
-    except not RuntimeError or not WebSocketDisconnect:
+    except Exception:
+        try:
+            await websocket.close()
+        except:
+            pass
         print("something else wen wrong in msg_manager, finally called")
 
 
