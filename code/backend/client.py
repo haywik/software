@@ -39,16 +39,23 @@ async def connect():
                 temp = incoming['server']['msg']
                 print("INFO websocket.connect(uri) MESSAGE RECEIVED: {serv['client']['msg']}")
             elif incoming["server"]["request"] == "response":
-                temp=incoming['server']['msg']
-                print("INFO websocket.connect(uri) SERVER RESPONSE: {}")
+                print("INFO websocket.connect(uri) SERVER RESPONSE:",incoming['server']['msg'])
 
             await asyncio.sleep(1)
 
         #new room logic?
 
 
-while True: #needs better error management, temporty fix
-    try:
-        asyncio.run(connect())
-    except Exception as e:
-        print("ERROR core run",e)
+
+
+async def run():
+    while True:
+        await asyncio.sleep(2)  # needs better error management, temporty fix
+        try:
+            asyncio.run(connect())
+        except Exception as e:
+            print("ERROR core run", e)
+
+
+
+run()
