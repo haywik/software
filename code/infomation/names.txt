@@ -1,1 +1,14 @@
-shuffle 
+ 
+--possible
+
+-not checked if taken
+
+open box
+shuffle box
+random chat
+
+
+--taken
+
+chatbox
+chatter box
