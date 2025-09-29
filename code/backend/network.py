@@ -127,13 +127,9 @@ async def join(websocket: WebSocket):
                 else:
 
                     online.update({online[online[Cid]["partner"]]["partner"]:"null"})
-        except RuntimeError:
-            try:
-                await websocket.close()
-                await asyncio.sleep(5)
-            except:
-                pass
-            print("run time error in join")
+                return
+        except RuntimeError as e:
+            print(e)
             print("websocket disconnect")
             if Cid in online:
                 if online[Cid]["partner"] == "null":
@@ -143,12 +139,15 @@ async def join(websocket: WebSocket):
                 else:
 
                     online.update({online[online[Cid]["partner"]]["partner"]: "null"})
+                return
         except Exception:
             try:
                 await websocket.close()
             except:
                 pass
+
             print("some not good in join, finnally called")
+            return
 
 
 

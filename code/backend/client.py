@@ -41,7 +41,7 @@ async def connect():
 
                 if incoming["server"]["request"] == "message":
                     temp = incoming['server']['msg']
-                    print("INFO websocket.connect(uri) MESSAGE RECEIVED: {serv['client']['msg']}")
+                    print("INFO websocket.connect(uri) MESSAGE RECEIVED: {incoming['client']['msg']}")
                 elif incoming["server"]["request"] == "response":
                     print("INFO websocket.connect(uri) SERVER RESPONSE:",incoming['server']['msg'])
 
