@@ -18,6 +18,7 @@ import webbrowser
 APP_NAME = "OpenBox [TEMP]"
 APP_ICON = "images/icon.png"
 font = "Fonts/BebasNeue-Regular.ttf"
+ToSTXT = "WARNING: This chat room is zero tolerance. No dating, sexual content, personal contact \nsharing, harassment, hate speech, illegal activity, spam, malware, impersonation, or disruption. Break any rule and you \nwill be banned and reported to authorities or platforms. No excuses, no warnings, no exceptions. By staying, you agree \nto follow these rules. You can see more online at:"
 # ------------------------------------------------
 
 # Set window icon BEFORE App runs (or it gets glitchy glitchison)
@@ -149,14 +150,14 @@ class WelcomeScreen(Screen):
         self.fade_event = None
         self.music_played = False
 
-    # --- MODIFIED SECTION ---
+
     def on_enter(self):
         self.clear_widgets()
 
-        # Use a FloatLayout to position the code input box on top
+
         root_layout = FloatLayout()
 
-        # Add the original WelcomeLayout
+
         welcome_box_layout = WelcomeLayout(screen_manager=self.manager)
         root_layout.add_widget(welcome_box_layout)
 
@@ -188,7 +189,7 @@ class WelcomeScreen(Screen):
             menu_screen = self.manager.get_screen('menu')
             menu_screen.set_welcome_message("Developer")
             self.manager.current = 'menu'
-    # --- END OF MODIFIED SECTION ---
+
 
     def on_pre_leave(self):
         if self.bg_music:
@@ -215,7 +216,9 @@ class LoadingScreen(Screen):
         self.user_name = ""
         self.layout = BoxLayout(orientation='vertical', padding=40, spacing=20)
         self.label = Label(text="Loading, please wait...", font_size=responsive_font(0.035))
+        self.tos = Label(text=f"{ToSTXT}", font_size=responsive_font(0.025))
         self.layout.add_widget(self.label)
+        self.layout.add_widget(self.tos)
         self.add_widget(self.layout)
 
     def set_user_name(self, name):
@@ -233,7 +236,9 @@ class ConnectingScreen(Screen):
         super().__init__(**kwargs)
         layout = BoxLayout(orientation='vertical', padding=40, spacing=20)
         label = Label(text="Connecting...", font_size=responsive_font(0.045))
+        self.tos2 = Label(text=f"{ToSTXT}", font_size=responsive_font(0.025))
         layout.add_widget(label)
+        layout.add_widget(self.tos2)
         self.add_widget(layout)
 
     def on_enter(self):
