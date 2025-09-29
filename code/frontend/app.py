@@ -18,7 +18,7 @@ import webbrowser
 APP_NAME = "OpenBox [TEMP]"
 APP_ICON = "images/icon.png"
 font = "Fonts/BebasNeue-Regular.ttf"
-ToSTXT = "WARNING: This chat room is zero tolerance. No dating, sexual content, personal contact \nsharing, harassment, hate speech, illegal activity, spam, malware, impersonation, or disruption. Break any rule and you \nwill be banned and reported to authorities or platforms. No excuses, no warnings, no exceptions. By staying, you agree \nto follow these rules. You can see more online at:"
+ToSTXT = "WARNING: This chat room is ZERO tolerance. No dating, sexual content, personal contact \nsharing, harassment, hate speech, illegal activity, spam, malware, impersonation, or disruption. Break any rule and you \nwill be banned and reported to authorities or platforms. No excuses, no warnings, no exceptions. By staying, you agree \nto follow these rules. You can see more online at:"
 # ------------------------------------------------
 
 # Set window icon BEFORE App runs (or it gets glitchy glitchison)
