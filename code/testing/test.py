@@ -1,4 +1,8 @@
-online={"00":"05","clientID":"null"}
+import asyncio
+import websockets
+import json
+import datetime
 
+time_is = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
-print(online["clientID"])
+print(time_is)

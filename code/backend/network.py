@@ -168,24 +168,39 @@ async def msg_manager(websocket : WebSocket,Cid,incoming):
                 "time": time_log
             }
         }
-        #print(f"\n\n\nINFO msg_manager(), {websocket},{Cid},{incoming} \n\n\n")
+        print(f"\n\n\nINFO msg_manager(), {websocket},{Cid},{incoming} \n\n\n")
+        #print(incoming)
 
-        if incoming["client"]["alive"]:
-            print("client send alive ping")
+        print(incoming["client"]["request"])
+
+        if incoming["client"]["request"] == "alive":
+            print(incoming["client"]["request"])
+            print(f"\nINFO: Alive Ping {datetime.datetime.now().strftime("%Y-%m-%d %H:%M")} IP: {websocket.client.host}")
             outcoming["server"]["request"] = "response"
             outcoming["server"]["msg"] = "alive ping recived"
             #print(outcoming)
             await websocket.send_json(outcoming)
             return
+        elif incoming["client"]["request"] == "message":
+            try:
+                print(incoming["client"]["request"])
+                websocket1 = online[online[Cid]["partner"]]["websocket"]
 
-        websocket1 = online[online[Cid]["partner"]]["websocket"]
+                print("sending message")
 
-        print("sending message")
+                outcoming["server"]["request"] = "message"
+                outcoming["server"]["msg"] = incoming["request"]["msg"]
 
-        outcoming["server"]["request"] = "message"
-        outcoming["server"]["msg"] = incoming["request"]["msg"]
+                print("incoming message", incoming["request"]["msg"])
 
-        await websocket1.send(json.dumps(outcoming))
+                await websocket1.send(json.dumps(outcoming))
+            except:
+                return
+
+
+
+        else:
+            print(incoming)
     except RuntimeError:
         try:
             await websocket.close()
@@ -202,12 +217,14 @@ async def msg_manager(websocket : WebSocket,Cid,incoming):
 
 
 
-    except Exception:
+    except Exception as e:
+        print("msg_manager",e)
         try:
             await websocket.close()
         except:
             pass
-        print("something else wen wrong in msg_manager, finally called")
+
+
 
 
         pass
