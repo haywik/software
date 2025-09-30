@@ -3,12 +3,12 @@
 
 -not checked if taken
 
-open box
-shuffle box
-random chat
+open box        #ok?
+shuffle box     #ok?
+random chat     #teribble
 
 
 --taken
 
-chatbox
-chatter box
+chatbox - commit murder
+chatter box - commit murder
