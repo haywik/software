@@ -1,5 +1,8 @@
 
+--- Moved to code/backend/information/to-do.txt
 
+
+[
 --list of prio
 
 test it over lan
@@ -7,7 +10,6 @@ test it over lan
 add guest username handling
 
 Add a proper error handling in client.py and network.py
-
-
+]
 
 
