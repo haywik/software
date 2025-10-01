@@ -1,0 +1,7 @@
+--To do list
+
+-Client.py + network.py
+
+: add a reconnection protocol
+
+
