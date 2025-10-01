@@ -1,16 +1,54 @@
-
-
-Lxc containers
+#This page is here to help me , after something breaks or needs rebuilding
 
 
 
-Network:
+--Pi lxc
 
-/etc/systemd/network/lxcbr0.netdev
+: Running a LXC container
 
-/etc/systemd/network/lxcbr0.network
-ip 10.0.3.1/24
+: Starts on boot
 
-sudo lxc-start -n app1 -F
--F interactive
--d background
+: >sudo lxc-attach -n app 1
+connects to terminal within the container
+
+: Unprivileged 
+
+:needs port 67 and 68 unblocked on pi ufw to work
+
+--lxc container
+
+: /etc/systemd/network/lxcbr0.netdev
+change network settings
+
+
+: /etc/systemd/network/lxcbr0.network
+changw settings of the netowkr driver for the container 
+
+
+: ip 10.0.3.1/24
+what the pi host thinks the IP is
+
+--Lxc startup
+
+: sudo lxc-start -n app1 -F
+: -F interactive
+: -d background
+
+
+--Files 
+
+: /opt/ Forgot
+where git is cloned into
+
+--Git
+
+: manual updates only due to being a production server
+
+: >git clone https://GitHub.com/haywik/software
+for new downloads
+
+: use git fetch
+to update current git
+
+:
+
