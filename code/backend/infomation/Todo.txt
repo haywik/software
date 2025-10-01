@@ -4,4 +4,21 @@
 
 : add a reconnection protocol
 
+: guest username
+
+
+-client.py
+
+: improved disconnect handling 
+currently gets stuck in a loop
+
+
+
+
+
+--Testing
+
+: Over land then cloudflare 
+
+
 
