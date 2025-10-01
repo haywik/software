@@ -356,7 +356,7 @@ class ChatScreen(Screen):
         top_bar.bind(pos=lambda inst, val: setattr(top_bar.bg_rect, 'pos', val))
         top_bar.bind(size=lambda inst, val: setattr(top_bar.bg_rect, 'size', val))
 
-        back_btn = Button(text="Go Back", size_hint=(None, 1), width=dp(50), font_size=responsive_font(0.05),
+        back_btn = Button(text="Back", size_hint=(None, 1), width=dp(50), font_size=responsive_font(0.05),
                           background_color=(0, 0, 0, 0), color=(1, 1, 1, 1))
         back_btn.bind(on_press=self.go_back)
         top_bar.add_widget(back_btn)
@@ -372,7 +372,7 @@ class ChatScreen(Screen):
         # Text input and send button
         input_container = BoxLayout(size_hint_y=None, height=dp(60), padding=dp(5), spacing=dp(5))
         self.chat_input = TextInput(
-            multiline=True,
+            multiline=False,
             size_hint=(0.85, 1),
             font_size=responsive_font(0.035),
             hint_text="Type your message...",
