@@ -14,11 +14,20 @@ currently gets stuck in a loop
 
 
 
-
-
 --Testing
 
 : Over land then cloudflare 
 
+
+--Pi
+
+: setup ssh application 
+
+: use reverse proxy, nginx
+will need to forward ips through nginx to server code as its listening on localhost
+
+: setup security policies within container and PI
+
+: VPN? and PI hole? on another container to increase security?
 
 
