@@ -18,6 +18,7 @@ import webbrowser
 APP_NAME = "OpenBox [TEMP]"
 APP_ICON = "images/icon.png"
 font = "Fonts/BebasNeue-Regular.ttf"
+fact = "Did you know: No AI (artifical intelligance) was used in the making of this application?"
 ToSTXT = "WARNING: This chat room is ZERO tolerance. No dating, sexual content, personal contact \nsharing, harassment, hate speech, illegal activity, spam, malware, impersonation, or disruption. Break any rule and you \nwill be banned and reported to authorities or platforms. No excuses, no warnings, no exceptions. By staying, you agree \nto follow these rules. You can see more online at:"
 # ------------------------------------------------
 
@@ -105,14 +106,25 @@ class WelcomeLayout(BoxLayout):
         )
         enter_button.bind(on_press=self.enter_chatroom)
 
+        # Get Started guid
+        get_started = Button(
+            text="Get Started Guid",
+            font_name=font,
+            size_hint=(1, 0.1),
+            background_color=(0.15, 0.35, 0.6, 1),
+            color=(1, 1, 1, 1),
+            font_size=responsive_font(0.035)
+        )
+
         # Add ToS first, then button
         self.add_widget(tos_label)
         self.add_widget(enter_button)
+        self.add_widget(get_started)
 
     def open_link(self, instance, value):
         """Called when the Terms and Conditions link is clicked!!!"""
         if value == 'tos':
-            webbrowser.open("app.haywik.com/tos")
+            webbrowser.open("https://sites.google.com/view/chatopenbox/help/tos")
 
     def show_popup(self, title, message, is_error=False):
         color = (0.7, 0.1, 0.1, 1) if is_error else (0.15, 0.35, 0.6, 1)
@@ -216,7 +228,7 @@ class LoadingScreen(Screen):
         self.user_name = ""
         self.layout = BoxLayout(orientation='vertical', padding=40, spacing=20)
         self.label = Label(text="Loading, please wait...", font_size=responsive_font(0.035))
-        self.tos = Label(text=f"{ToSTXT}", font_size=responsive_font(0.025))
+        self.tos = Label(text=f"{fact}", font_size=responsive_font(0.025))
         self.layout.add_widget(self.label)
         self.layout.add_widget(self.tos)
         self.add_widget(self.layout)
