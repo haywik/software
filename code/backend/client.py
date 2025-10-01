@@ -76,16 +76,18 @@ async def connect():
 
 
 async def run_relay():
-    await asyncio.sleep(2)
-    await connect()
-
-while True:
-
     try:
-        asyncio.run(run_relay())
-    except Exception as e:
+        await connect()
+    except:
+        asynno.run(run_relay())
 
-        print("ERROR core run", e)
+
+try:
+    asyncio.run(run_relay())
+
+except Exception as e:
+
+    print("ERROR core run", e)
 
 
 
