@@ -1,5 +1,12 @@
 --To do list
 
+---Prioity
+
+: clean up code
+
+: test it over lan
+
+
 -Client.py + network.py
 
 : add a reconnection protocol
@@ -16,7 +23,9 @@ currently gets stuck in a loop
 
 --Testing
 
-: Over land then cloudflare 
+: Over lan with multiple devices 
+
+: use wan temporary to test, then implement security protocols 
 
 
 --Pi
