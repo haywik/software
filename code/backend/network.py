@@ -11,48 +11,35 @@ from fastapi.responses import StreamingResponse
 from contextlib import asynccontextmanager
 
 import asyncio
-import json
-import time
-import subprocess
 import datetime
-import sys
 import json
 import uuid
 import random
 
 
-boot_time = datetime.datetime.now()
+
 
 
 
 
 #----Varibles----
 
-online={
-    "clientID":{
-        "websocket":"websocket value",
-        "partner":"partner value",
-        "joined":"base"
-    }
-}
+boot_time = datetime.datetime.now()
 
+queue=[]
 
-queue=["clientID","NextClientID"]  #when a client requests a room, they are placed into queue, parternet is set to null, then moved onto someone random, must update partner one and two
-#contains everyone with a active websocket,if null then sort() will give them a partner once it is their turn in the list
+online={}
 
-active_connections: set[WebSocket] = set()
+active_connections: set[WebSocket] = set()      #adds websocket as a hint, causes less errors and easier linking
+
 
 #----Varibles End----
 
 
-#app startup and shutdown behaviour
-@asynccontextmanager
+@asynccontextmanager        #Boot behaviour
 async def lifespan(app:FastAPI):
     yield
 
-
-
-    print("Server Shutdown")
     for connection in active_connections:
         try:
             await connection.close(code=1001,reason="Server Shutdown")
@@ -65,22 +52,25 @@ app = FastAPI(lifespan=lifespan)
 
 
 async def sort():
+
     while True:
-        await asyncio.sleep(0.01)
         if queue >= 2:
-            client = queue[0]
-            partner = queue[random.randint(1,len(queue)-1)]
+            try:
+                client = queue[0]
+                partner = queue[random.randint(1,len(queue)-1)]
 
-            online[client]["partner"] = partner
-            online[partner]["partner"] = client
+                online[client]["partner"] = partner
+                online[partner]["partner"] = client
 
-            websocket = online[client]["websocket"]
-            websocket.send_text("room")
+                websocket = online[client]["websocket"]
+                websocket.send_text("room")
 
-            websocket = online[partner]["websocket"]
-            websocket.send_text("room")
+                websocket = online[partner]["websocket"]
+                websocket.send_text("room")
+            except:
+                pass
         else:
-            print("insufficent clients")
+            print("INFO in sort(): Insufficent clients in queue")
             await asyncio.sleep(0.01)
 
 
@@ -110,75 +100,67 @@ async def join(websocket: WebSocket):
     await websocket.send_text(f"{Cid}:{position}")
 
     while True:
+
         try:              #keeps alive, manages if user goes offline
             incoming = await websocket.receive_text()
             asyncio.create_task(msg_manager(websocket,Cid,incoming))
+
         except WebSocketDisconnect:
-            try:
-                await websocket.close()
-            except:
-                pass
-            print("websocket disconnect")
+
+            print("Websocket Dissconnect called in join()")
+
+            try:websocket.close()
+            except:pass
+
             if Cid in online:
-                if online[Cid]["partner"] == "null":
-                    del online[Cid]
-                    queue.remove(Cid)
 
-                else:
+                if online[Cid]["partner"] == "null":online[Cid]["partner"] = "null"
 
-                    online.update({online[online[Cid]["partner"]]["partner"]:"null"})
-                return
+                else:online.update({online[online[Cid]["partner"]]["partner"]:"null"})
+
+            return
+
         except RuntimeError as e:
-            print(e)
-            print("websocket disconnect")
-            if Cid in online:
-                if online[Cid]["partner"] == "null":
-                    del online[Cid]
-                    queue.remove(Cid)
+            print("\nRunTimeError: Websocket disconnect",e)
+            return
 
-                else:
+        except Exception as e:
 
-                    online.update({online[online[Cid]["partner"]]["partner"]: "null"})
-                return
-        except Exception:
-            try:
-                await websocket.close()
-            except:
-                pass
+            print("\nMajor exepetion 1 in join()",e)
 
-            print("some not good in join, finnally called")
             return
 
 
 
 
 async def msg_manager(websocket : WebSocket,Cid,incoming):
+
     try:
         if not Cid or Cid=="":
             return
 
+
         incoming = json.loads(incoming)
-        time_log = str(datetime.datetime.now())
+
+        time_log = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+
         outcoming = {
             "server": {
                 "type": "websocket.send",
-
                 "request": "null",
                 "msg": "null",
                 "time": time_log
             }
         }
-        print(f"\n\n\nINFO msg_manager(), {websocket},{Cid},{incoming} \n\n\n")
-        #print(incoming)
 
-        print(incoming["client"]["request"])
+        #print(f"\n\n\nINFO msg_manager(), {websocket},{Cid},{incoming} \n\n\n")
 
         if incoming["client"]["request"] == "alive":
-            print(incoming["client"]["request"])
-            print(f"\nINFO: Alive Ping {datetime.datetime.now().strftime("%Y-%m-%d %H:%M")} IP: {websocket.client.host}")
+            time_log = outcoming["server"]["time"]
+            print(f"\nINFO: Alive Ping {outcoming} IP: {websocket.client.host}")                    #Here on clean up---------
             outcoming["server"]["request"] = "response"
             outcoming["server"]["msg"] = "alive ping recived"
-            #print(outcoming)
+
             await websocket.send_json(outcoming)
             return
         elif incoming["client"]["request"] == "message":

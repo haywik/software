@@ -4,15 +4,6 @@ import json
 
 from starlette.websockets import WebSocketDisconnect
 
-'''
-msg = {
-    "client":{
-        "alive":True,
-        "request":"null",
-        "msg":"null"
-    }
-}
-'''
 
 
 async def input_waiting():
@@ -24,8 +15,11 @@ async def connect():
     try:
         async with websockets.connect(uri) as websocket:
             serv = await websocket.recv()
-            print(f"INFO websocket.connect(uri): {serv}")
+
+            #print(f"INFO websocket.connect(uri): {serv}")
+
             user_term = asyncio.create_task(input_waiting())
+
             while True: #
 
 
@@ -79,7 +73,7 @@ async def run_relay():
     try:
         await connect()
     except:
-        asynno.run(run_relay())
+        asyncio.run(run_relay())
 
 
 try:
