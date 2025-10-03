@@ -157,12 +157,10 @@ async def msg_manager(websocket : WebSocket,Cid,incoming):
 
         if incoming["client"]["request"] == "alive":
             time_log = outcoming["server"]["time"]
-            print(f"\nINFO: Alive Ping {outcoming} IP: {websocket.client.host}")                    #Here on clean up---------
+            print(f"\nAlive Ping {time_log} IP: {websocket.client.host}")                    #Here on clean up---------
             outcoming["server"]["request"] = "response"
             outcoming["server"]["msg"] = "alive ping recived"
-
             await websocket.send_json(outcoming)
-            return
         elif incoming["client"]["request"] == "message":
             try:
                 print(incoming["client"]["request"])
@@ -176,40 +174,34 @@ async def msg_manager(websocket : WebSocket,Cid,incoming):
                 print("incoming message", incoming["request"]["msg"])
 
                 await websocket1.send(json.dumps(outcoming))
-            except:
-                return
-
-
-
+            except Exception as e:
+                print("\nEREROR exeption in msg_manager()",e)
         else:
-            print(incoming)
+            print("Unexpected incoming",incoming)
+
+
     except RuntimeError:
         try:
             await websocket.close()
 
         except:
             pass
-        print("discconet msg already recived")
+
+        finally: return
+
     except WebSocketDisconnect:
         try:
             await websocket.close()
         except:
             pass
-        print("Websocket disconnect")
+        finally:
+            print("msg_manager websoket dissconnect")
+            return
 
 
 
     except Exception as e:
-        print("msg_manager",e)
-        try:
-            await websocket.close()
-        except:
-            pass
-
-
-
-
-        pass
+        print("Exception in msg_manager()",e)
 
     return
 

@@ -1,32 +1,33 @@
+from starlette.websockets import WebSocketDisconnect
+
 import asyncio
 import websockets
 import json
-
-from starlette.websockets import WebSocketDisconnect
 
 
 
 async def input_waiting():
     return await asyncio.to_thread(input,"Enter MSG:")
 
+
 async def connect():
-    uri = "ws://localhost:8011/join"
+
+    #uri = "ws://app.haywik.com/backend"
+
+    uri = "ws://localhost:8011/join"   #for testing, change to host ip for tsting over lan
 
     try:
         async with websockets.connect(uri) as websocket:
-            serv = await websocket.recv()
+            await websocket.recv()
 
-            #print(f"INFO websocket.connect(uri): {serv}")
+            user_term = asyncio.create_task(input_waiting())        #acceptes user input
 
-            user_term = asyncio.create_task(input_waiting())
-
-            while True: #
+            while True:
 
 
                 outcoming = {   #outcoming for client, incoming for client
                     "client": {
                         "type": "websocket.send",
-
                         "alive": True,
                         "request": "alive",
                         "msg": "null"

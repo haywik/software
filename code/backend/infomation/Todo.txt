@@ -5,6 +5,7 @@
 : clean up code
 
 : test it over lan
+make sure to change URI
 
 
 -Client.py + network.py
