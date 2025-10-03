@@ -134,7 +134,7 @@ async def join(websocket: WebSocket):
 
 
 async def msg_manager(websocket : WebSocket,Cid,incoming):
-
+    print(incoming)
     try:
         if not Cid or Cid=="":
             return

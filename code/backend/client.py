@@ -3,6 +3,7 @@ from starlette.websockets import WebSocketDisconnect
 import asyncio
 import websockets
 import json
+import datetime
 
 
 
@@ -22,8 +23,12 @@ async def connect():
 
             user_term = asyncio.create_task(input_waiting())        #acceptes user input
 
+            loop_count = 0
             while True:
 
+                print("loop_count",loop_count)   #! test code
+
+                loop_count += 1
 
                 outcoming = {   #outcoming for client, incoming for client
                     "client": {
@@ -37,24 +42,30 @@ async def connect():
                 try:
                     if user_term.done():
                         user_term = user_term.result()
-                        print("User has inputted",user_term)
                         outcoming["client"]["request"] = "message"
                         outcoming["client"]["msg"] = user_term
 
                         user_term = asyncio.create_task(input_waiting())
 
+                        await websocket.send(json.dumps(outcoming))
+
+                        print("MSG sent",outcoming["client"]["msg"])
+
+                    else:
+                        if int(loop_count / 5) == loop_count / 5:
+                            await websocket.send(json.dumps(outcoming))
+
                 except Exception as e:
                     print("user input error",e)
 
-                #print(outcoming)
-                await websocket.send(json.dumps(outcoming))
 
 
                 incoming =  json.loads(await websocket.recv())
 
                 if incoming["server"]["request"] == "message":
                     temp = incoming['server']['msg']
-                    print("INFO websocket.connect(uri) MESSAGE RECEIVED: {incoming['client']['msg']}")
+                    print(f"msg>{incoming['server']['msg']}")
+
                 elif incoming["server"]["request"] == "response":
                     #print("INFO websocket.connect(uri) SERVER RESPONSE:",incoming['server']['msg'])
                     pass
@@ -71,18 +82,17 @@ async def connect():
 
 
 async def run_relay():
-    try:
-        await connect()
-    except:
-        asyncio.run(run_relay())
+    while True:
+        try:
+            await connect()
+        except Exception as e:
+            print("MAJOR ERROR, relay crashed\n",e)
+            await asyncio.sleep(2)
 
 
-try:
-    asyncio.run(run_relay())
+asyncio.run(run_relay())
 
-except Exception as e:
 
-    print("ERROR core run", e)
 
 
 
